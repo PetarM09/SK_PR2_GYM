@@ -1,10 +1,14 @@
 package example.controller;
 
 import example.domen.FiskulturnaSala;
+import example.domen.TerminTreninga;
 import example.dto.FiskulturnaSalaDTO;
+import example.dto.TerminTreningaDTO;
 import example.mapper.FiskulturnaSalaMapper;
+import example.mapper.TerminTreningaMapper;
 import example.security.CheckSecurity;
 import example.service.FiskulturnaSalaService;
+import example.service.TerminTreningaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,4 +33,6 @@ public class FiskulturnaSalaController {
         FiskulturnaSala sacuvanaSala = salaService.sacuvajIliAzurirajSalu(sala);
         return new ResponseEntity<>(FiskulturnaSalaMapper.toDTO(sacuvanaSala), HttpStatus.OK);
     }
+
+
 }

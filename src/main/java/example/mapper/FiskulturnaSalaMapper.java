@@ -9,7 +9,6 @@ public class FiskulturnaSalaMapper {
         dto.setId(sala.getId());
         dto.setIme(sala.getIme());
         dto.setKratakOpis(sala.getKratakOpis());
-        // Postavite ostala polja po potrebi
         return dto;
     }
 
@@ -18,7 +17,6 @@ public class FiskulturnaSalaMapper {
         sala.setId(dto.getId());
         sala.setIme(dto.getIme());
         sala.setKratakOpis(dto.getKratakOpis());
-        // Postavite ostala polja po potrebi
         return sala;
     }
 }
