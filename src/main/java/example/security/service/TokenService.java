@@ -7,4 +7,5 @@ public interface TokenService {
     String generate(Claims claims);
 
     Claims parseToken(String jwt);
+    public Long parseId(String jwt);
 }

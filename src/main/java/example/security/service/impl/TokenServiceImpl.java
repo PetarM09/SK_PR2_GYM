@@ -35,4 +35,9 @@ public class TokenServiceImpl implements TokenService {
         }
         return claims;
     }
+
+    @Override
+    public Long parseId(String jwt) {
+        return ((Number)parseToken(jwt.split(" ")[1]).get("id")).longValue();
+    }
 }

@@ -1,5 +1,6 @@
 package example.controller;
 
+import antlr.Token;
 import example.domen.TerminTreninga;
 import example.domen.ZakazaniTermin;
 import example.dto.FiskulturnaSalaDTO;
@@ -7,6 +8,7 @@ import example.dto.TerminTreningaDTO;
 import example.dto.ViseTerminaTreninga;
 import example.mapper.TerminTreningaMapper;
 import example.security.CheckSecurity;
+import example.security.service.TokenService;
 import example.service.TerminTreningaService;
 import example.service.ZakazaniTerminService;
 import org.springframework.http.HttpStatus;
@@ -22,9 +24,11 @@ import java.util.List;
 public class TerminTreningaController {
     private final TerminTreningaService terminTreningaService;
     private final ZakazaniTerminService zakazaniTerminService;
+    private TokenService tokenService;
 
-    public TerminTreningaController(TerminTreningaService terminTreningaService, ZakazaniTerminService zakazaniTerminService) {
+    public TerminTreningaController(TerminTreningaService terminTreningaService, ZakazaniTerminService zakazaniTerminService, TokenService tokenService) {
         this.terminTreningaService = terminTreningaService;
+        this.tokenService = tokenService;
         this.zakazaniTerminService = zakazaniTerminService;
     }
 
@@ -98,12 +102,16 @@ public class TerminTreningaController {
         List<ZakazaniTermin> zakazaniTermini = zakazaniTerminService.dohvatiZakazaneTreninge();
 
         List<TerminTreninga> termini = new ArrayList<>();
+        Long id = tokenService.parseId(authorization);
+
         List<TerminTreninga> sviTermini = terminTreningaService.dohvatiSveTermine();
 
         for (ZakazaniTermin zakazaniTermin : zakazaniTermini){
-            for (TerminTreninga terminTreninga : sviTermini){
-                if (zakazaniTermin.getTerminTreninga().getId() == terminTreninga.getId()){
-                    termini.add(terminTreninga);
+            if (zakazaniTermin.getKlijentId() == id.intValue()) {
+                for (TerminTreninga terminTreninga : sviTermini) {
+                    if (zakazaniTermin.getTerminTreninga().getId() == terminTreninga.getId()) {
+                        termini.add(terminTreninga);
+                    }
                 }
             }
         }
