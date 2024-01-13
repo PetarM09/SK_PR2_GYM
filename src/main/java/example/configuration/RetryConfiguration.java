@@ -16,7 +16,7 @@ public class RetryConfiguration {
     @Bean
     public Retry terminServiceRetry(){
         RetryConfig retryConfig = RetryConfig.custom()
-                .intervalFunction(IntervalFunction.ofExponentialBackoff(2000,  2))
+                .intervalFunction(IntervalFunction.ofExponentialBackoff(2000, 2))
                 .maxAttempts(5)
                 .ignoreExceptions(NotFoundException.class)
                 .build();
@@ -27,3 +27,4 @@ public class RetryConfiguration {
     }
 
 }
+
