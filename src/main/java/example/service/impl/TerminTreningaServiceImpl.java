@@ -2,8 +2,10 @@ package example.service.impl;
 
 import example.domen.TerminTreninga;
 import example.repository.TerminTreningaRepository;
+import example.security.service.TokenService;
 import example.service.TerminTreningaService;
 import io.github.resilience4j.retry.Retry;
+import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -16,10 +18,12 @@ import java.util.List;
 public class TerminTreningaServiceImpl implements TerminTreningaService {
     private final TerminTreningaRepository terminTreningaRepository;
     private Retry retry;
+    private TokenService tokenService;
 
-    public TerminTreningaServiceImpl(TerminTreningaRepository terminTreningaRepository, Retry retry) {
+    public TerminTreningaServiceImpl(TerminTreningaRepository terminTreningaRepository, Retry retry, TokenService tokenService) {
         this.terminTreningaRepository = terminTreningaRepository;
         this.retry = retry;
+        this.tokenService = tokenService;
     }
 
     @Override
@@ -42,6 +46,8 @@ public class TerminTreningaServiceImpl implements TerminTreningaService {
         }));
 //        Retry.decorateSupplier(retry ()-> OVDE TREBA GET REQ KA USER SERVISU VEROVATNO NOT SURE);
     }
+
+
 
 
 }

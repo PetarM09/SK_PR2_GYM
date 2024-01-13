@@ -18,7 +18,6 @@ public class RetryConfiguration {
         RetryConfig retryConfig = RetryConfig.custom()
                 .intervalFunction(IntervalFunction.ofExponentialBackoff(2000,  2))
                 .maxAttempts(5)
-                .waitDuration(Duration.ofSeconds(5))
                 .ignoreExceptions(NotFoundException.class)
                 .build();
 

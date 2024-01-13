@@ -13,4 +13,5 @@ public interface TerminTreningaService {
 
     Integer brojTreninga(Long id);
 
+
 }

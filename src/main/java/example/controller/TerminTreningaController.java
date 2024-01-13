@@ -1,12 +1,14 @@
 package example.controller;
 
 import example.domen.TerminTreninga;
+import example.domen.ZakazaniTermin;
 import example.dto.FiskulturnaSalaDTO;
 import example.dto.TerminTreningaDTO;
 import example.dto.ViseTerminaTreninga;
 import example.mapper.TerminTreningaMapper;
 import example.security.CheckSecurity;
 import example.service.TerminTreningaService;
+import example.service.ZakazaniTerminService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/termin-treninga")
+@RequestMapping("/termin-treninga")
 public class TerminTreningaController {
     private final TerminTreningaService terminTreningaService;
+    private final ZakazaniTerminService zakazaniTerminService;
 
-    public TerminTreningaController(TerminTreningaService terminTreningaService) {
+    public TerminTreningaController(TerminTreningaService terminTreningaService, ZakazaniTerminService zakazaniTerminService) {
         this.terminTreningaService = terminTreningaService;
+        this.zakazaniTerminService = zakazaniTerminService;
     }
 
     @PostMapping("/zakazi-termin")
@@ -33,8 +37,10 @@ public class TerminTreningaController {
 
         return new ResponseEntity<>(TerminTreningaMapper.toDTO(zakazano),HttpStatus.OK);
     }
+
     @GetMapping("/izlistaj-Termine")
-    public ResponseEntity<List<TerminTreninga>> izlistajTermine(){
+    public ResponseEntity<List<TerminTreninga>> izlistajTermine(@RequestHeader("Authorization") String authorization){
+
         List<TerminTreninga> listaTermina = terminTreningaService.dohvatiSveTermine();
         return new ResponseEntity<>(listaTermina,HttpStatus.OK);
     }
@@ -86,4 +92,22 @@ public class TerminTreningaController {
         return new ResponseEntity<>("Termin " + id + " otkazan uspesno.", HttpStatus.OK);
     }
 
+    @GetMapping("/izlistaj-Termine-Korisnika")
+    public ResponseEntity<List<TerminTreninga>> izlistajTermineKorisnika(@RequestHeader("Authorization") String authorization){
+
+        List<ZakazaniTermin> zakazaniTermini = zakazaniTerminService.dohvatiZakazaneTreninge();
+
+        List<TerminTreninga> termini = new ArrayList<>();
+        List<TerminTreninga> sviTermini = terminTreningaService.dohvatiSveTermine();
+
+        for (ZakazaniTermin zakazaniTermin : zakazaniTermini){
+            for (TerminTreninga terminTreninga : sviTermini){
+                if (zakazaniTermin.getTerminTreninga().getId() == terminTreninga.getId()){
+                    termini.add(terminTreninga);
+                }
+            }
+        }
+
+        return new ResponseEntity<>(termini,HttpStatus.OK);
+    }
 }

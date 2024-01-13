@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/fiskulturne-sale")
+@RequestMapping("/fiskulturne-sale")
 public class FiskulturnaSalaController {
 
     private final FiskulturnaSalaService salaService;
