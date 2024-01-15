@@ -44,9 +44,29 @@ public class TerminTreningaController {
 
     @GetMapping("/izlistaj-Termine")
     public ResponseEntity<List<TerminTreninga>> izlistajTermine(@RequestHeader("Authorization") String authorization){
-
         List<TerminTreninga> listaTermina = terminTreningaService.dohvatiSveTermine();
         return new ResponseEntity<>(listaTermina,HttpStatus.OK);
+    }
+
+    @GetMapping("/izlistaj-slobodne-termine")
+    public ResponseEntity<List<TerminTreninga>> izlistajSlobodneTermine(@RequestHeader("Authorization") String authorization){
+        List<TerminTreninga> listaTermina = terminTreningaService.dohvatiSveTermine();
+        List<TerminTreninga> slobodniTermini = new ArrayList<>();
+        List<ZakazaniTermin> zakazaniTermini = zakazaniTerminService.dohvatiZakazaneTreninge();
+        Long id = tokenService.parseId(authorization);
+
+        for (TerminTreninga terminTreninga : listaTermina){
+            boolean slobodan = true;
+            for (ZakazaniTermin zakazaniTermin : zakazaniTermini){
+                if (zakazaniTermin.getTerminTreninga().getId() == terminTreninga.getId()){
+                    slobodan = false;
+                }
+            }
+            if (slobodan){
+                slobodniTermini.add(terminTreninga);
+            }
+        }
+        return new ResponseEntity<>(slobodniTermini,HttpStatus.OK);
     }
 
     @GetMapping("/filtirajPoIndividualni-Grupni")
@@ -116,6 +136,24 @@ public class TerminTreningaController {
             }
         }
 
+        return new ResponseEntity<>(termini,HttpStatus.OK);
+    }
+
+    @CheckSecurity(roles = {"ADMIN","MENADZER"})
+    @GetMapping("/izlistaj-Termine-sve")
+    public ResponseEntity<List<TerminTreninga>> izlistajTermineSve(@RequestHeader("Authorization") String authorization){
+        List<ZakazaniTermin> zakazaniTermini = zakazaniTerminService.dohvatiZakazaneTreninge();
+        List<TerminTreninga> termini = new ArrayList<>();
+
+        List<TerminTreninga> sviTermini = terminTreningaService.dohvatiSveTermine();
+
+        for (ZakazaniTermin zakazaniTermin : zakazaniTermini){
+                for (TerminTreninga terminTreninga : sviTermini) {
+                    if(zakazaniTermin.getTerminTreninga().getId() == terminTreninga.getId()){
+                        termini.add(terminTreninga);
+                }
+            }
+        }
         return new ResponseEntity<>(termini,HttpStatus.OK);
     }
 }
