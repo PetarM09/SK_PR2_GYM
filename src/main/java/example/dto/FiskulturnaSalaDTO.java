@@ -5,6 +5,16 @@ public class FiskulturnaSalaDTO {
     private String ime;
     private String kratakOpis;
 
+    private Integer broj_personalnih_trenera;
+
+    public Integer getBroj_personalnih_trenera() {
+        return broj_personalnih_trenera;
+    }
+
+    public void setBroj_personalnih_trenera(Integer broj_personalnih_trenera) {
+        this.broj_personalnih_trenera = broj_personalnih_trenera;
+    }
+
     public Long getId() {
         return id;
     }

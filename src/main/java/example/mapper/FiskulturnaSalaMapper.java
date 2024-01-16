@@ -9,6 +9,7 @@ public class FiskulturnaSalaMapper {
         dto.setId(sala.getId());
         dto.setIme(sala.getIme());
         dto.setKratakOpis(sala.getKratakOpis());
+        dto.setBroj_personalnih_trenera(sala.getBrojPersonalnihTrenera());
         return dto;
     }
 
@@ -17,6 +18,7 @@ public class FiskulturnaSalaMapper {
         sala.setId(dto.getId());
         sala.setIme(dto.getIme());
         sala.setKratakOpis(dto.getKratakOpis());
+        sala.setBrojPersonalnihTrenera(dto.getBroj_personalnih_trenera());
         return sala;
     }
 }
