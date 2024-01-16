@@ -71,7 +71,7 @@ public class TerminTreningaServiceImpl implements TerminTreningaService {
         terminTreningaRepository.save(terminTreninga);
     }
 
-    public void povecajBrojUcesnika(TerminTreninga terminTreninga){
+    public void povecajBrojUcesnika(TerminTreningaDTO terminTreningaDTO){
 
             TerminTreninga terminTreninga = terminTreningaRepository.getOne(terminTreningaDTO.getId());
             terminTreninga.setBrojUcesnika(terminTreninga.getBrojUcesnika()+1);
