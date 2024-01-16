@@ -9,6 +9,7 @@ import example.domen.ZakazaniTermin;
 import example.dto.FiskulturnaSalaDTO;
 import example.dto.TerminTreningaDTO;
 import example.dto.ViseTerminaTreninga;
+import example.dto.ZakazaniTerminDTO;
 import example.mapper.TerminTreningaMapper;
 import example.security.CheckSecurity;
 import example.security.service.TokenService;
@@ -36,26 +37,46 @@ public class TerminTreningaController {
     }
 
     @PostMapping("/zakazi-termin")
-    @CheckSecurity(roles = {"KLIJENT"})
-    public ResponseEntity<ZakazaniTermin> zakaziTermin(@RequestBody String jsonRequestBody){
+    public ResponseEntity<ZakazaniTermin> zakaziTermin(@RequestHeader("Authorization") String authorization, @RequestBody String jsonRequestBody) {
 
         ObjectMapper mapper = new ObjectMapper();
 
-        JsonNode jsonNode = null;
-        int klijentId = 0;
+        long klijentId = 0;
         TerminTreningaDTO terminTreninga = null;
         try {
-            jsonNode = mapper.readTree(jsonRequestBody);
-            klijentId = jsonNode.get("klijentID").asInt();
+            klijentId = tokenService.parseId(authorization);
             terminTreninga = mapper.readValue(jsonRequestBody, TerminTreningaDTO.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
 
+        if (terminTreninga.getBrojUcesnika() + 1 < terminTreninga.getMaksimalanBrojUcesnika()) {
 
-        ZakazaniTermin zakazaniTermin = zakazaniTerminService.zakaziTermin(terminTreninga,klijentId);
+            ZakazaniTermin zakazaniTermin = zakazaniTerminService.zakaziTermin(terminTreninga, klijentId);
+            return new ResponseEntity<>(zakazaniTermin, HttpStatus.OK);
 
-        return new ResponseEntity<>(zakazaniTermin,HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.valueOf("Maksimalan broj je dostignut"));
+        }
+    }
+
+    @PostMapping("/dodaj-termin")
+    public ResponseEntity<TerminTreninga> dodajTermin(@RequestBody String jsonRequestBody) {
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        JsonNode jsonNode = null;
+        TerminTreningaDTO terminTreningaDTO = null;
+        try {
+            jsonNode = mapper.readTree(jsonRequestBody);
+            terminTreningaDTO = mapper.readValue(jsonRequestBody, TerminTreningaDTO.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        TerminTreninga terminTreninga = terminTreningaService.dodajTermin(terminTreningaDTO);
+        return new ResponseEntity<>(terminTreninga, HttpStatus.OK);
+
     }
 
     @GetMapping("/izlistaj-Termine")
@@ -127,9 +148,17 @@ public class TerminTreningaController {
 
     @DeleteMapping("/otkaziTermin/{id}")
     @CheckSecurity(roles = {"KLIJENT","MENADZER"})
-    public ResponseEntity<String> otkaziTermin(@PathVariable Long id){
-        terminTreningaService.otkaziTermin(id);
-        return new ResponseEntity<>("Termin " + id + " otkazan uspesno.", HttpStatus.OK);
+    public ResponseEntity<String> otkaziZakazaniTermin(@RequestBody String jsonRequestBody){
+        ZakazaniTerminDTO zakazaniTerminDTO = null;
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            zakazaniTerminDTO = mapper.readValue(jsonRequestBody, ZakazaniTerminDTO.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        zakazaniTerminService.otkaziZakazaniTermin(zakazaniTerminDTO);
+        return new ResponseEntity<>("Termin " + zakazaniTerminDTO.getId() + " otkazan uspesno.", HttpStatus.OK);
     }
 
     @GetMapping("/izlistaj-Termine-Korisnika")

@@ -3,6 +3,7 @@ package example.service;
 import example.domen.TerminTreninga;
 import example.domen.ZakazaniTermin;
 import example.dto.TerminTreningaDTO;
+import example.dto.ZakazaniTerminDTO;
 import example.repository.ZakazaniTerminRepository;
 
 import java.util.List;
@@ -12,5 +13,7 @@ public interface ZakazaniTerminService{
 
     List<ZakazaniTermin> dohvatiZakazaneTreninge();
 
-    public ZakazaniTermin zakaziTermin(TerminTreningaDTO terminTreninga, Integer klijentID);
+    ZakazaniTermin zakaziTermin(TerminTreningaDTO terminTreninga, Long klijentID);
+
+    void otkaziZakazaniTermin(ZakazaniTerminDTO zakazaniTerminDTO);
 }

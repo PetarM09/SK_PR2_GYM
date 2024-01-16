@@ -47,4 +47,5 @@ public class ZakazaniTerminDTO {
     public void setJeBesplatan(Boolean jeBesplatan) {
         this.jeBesplatan = jeBesplatan;
     }
+
 }

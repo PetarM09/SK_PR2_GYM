@@ -33,6 +33,18 @@ public class TerminTreninga {
     @Column(name = "cena", nullable = false)
     private Integer cena;
 
+    @Column(name = "brojUcesnika", nullable = true)
+    private Integer brojUcesnika;
+
+
+    public Integer getBrojUcesnika() {
+        return brojUcesnika;
+    }
+
+    public void setBrojUcesnika(Integer brojUcesnika) {
+        this.brojUcesnika = brojUcesnika;
+    }
+
     public Integer getCena() {
         return cena;
     }

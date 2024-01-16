@@ -1,6 +1,7 @@
 package example.service;
 
 import example.domen.TerminTreninga;
+import example.dto.TerminTreningaDTO;
 
 import java.util.List;
 
@@ -13,5 +14,5 @@ public interface TerminTreningaService {
 
     Integer brojTreninga(Long id);
 
-
+    TerminTreninga dodajTermin(TerminTreningaDTO terminTreningaDTO);
 }

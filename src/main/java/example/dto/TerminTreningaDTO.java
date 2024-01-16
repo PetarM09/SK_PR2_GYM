@@ -12,6 +12,9 @@ public class TerminTreningaDTO {
     private Time vremePocetka;
     private Integer maksimalanBrojUcesnika;
 
+    private Integer brojUcesnika;
+
+
     private Integer cena;
 
     public Integer getCena() {
@@ -68,5 +71,13 @@ public class TerminTreningaDTO {
 
     public void setMaksimalanBrojUcesnika(Integer maksimalanBrojUcesnika) {
         this.maksimalanBrojUcesnika = maksimalanBrojUcesnika;
+    }
+
+    public Integer getBrojUcesnika() {
+        return brojUcesnika;
+    }
+
+    public void setBrojUcesnika(Integer brojUcesnika) {
+        this.brojUcesnika = brojUcesnika;
     }
 }

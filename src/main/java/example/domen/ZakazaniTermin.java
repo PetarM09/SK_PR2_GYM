@@ -24,6 +24,7 @@ public class ZakazaniTermin {
     @Column(name = "je_besplatan", nullable = false)
     private Boolean jeBesplatan;
 
+
     public Long getId() {
         return id;
     }

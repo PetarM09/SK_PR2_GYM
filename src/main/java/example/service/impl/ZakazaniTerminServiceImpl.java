@@ -3,7 +3,9 @@ package example.service.impl;
 import example.domen.TerminTreninga;
 import example.domen.ZakazaniTermin;
 import example.dto.TerminTreningaDTO;
+import example.dto.ZakazaniTerminDTO;
 import example.repository.TerminTreningaRepository;
+import example.repository.TipTreningaRepository;
 import example.repository.ZakazaniTerminRepository;
 import example.security.service.TokenService;
 import example.service.ZakazaniTerminService;
@@ -22,11 +24,14 @@ public class ZakazaniTerminServiceImpl implements ZakazaniTerminService {
     private TerminTreningaRepository terminTreningaRepository;
 
     private TokenService tokenService;
+    private final TipTreningaRepository tipTreningaRepository;
 
-    public ZakazaniTerminServiceImpl(ZakazaniTerminRepository zakazaniTerminRepository, TerminTreningaRepository terminTreningaRepository, TokenService tokenService) {
+    public ZakazaniTerminServiceImpl(ZakazaniTerminRepository zakazaniTerminRepository, TerminTreningaRepository terminTreningaRepository, TokenService tokenService,
+                                     TipTreningaRepository tipTreningaRepository) {
         this.zakazaniTerminRepository = zakazaniTerminRepository;
         this.terminTreningaRepository = terminTreningaRepository;
         this.tokenService = tokenService;
+        this.tipTreningaRepository = tipTreningaRepository;
     }
 
     @Override
@@ -48,18 +53,22 @@ public class ZakazaniTerminServiceImpl implements ZakazaniTerminService {
     }
 
     @Override
-    public ZakazaniTermin zakaziTermin(TerminTreningaDTO terminTreninga, Integer klijentID) {
+    public ZakazaniTermin zakaziTermin(TerminTreningaDTO terminTreninga, Long klijentID) {
         ZakazaniTermin zakazaniTermin = new ZakazaniTermin();
         TerminTreninga terminTreninga1 = terminTreningaRepository.getOne(terminTreninga.getIdTreninga());
+
         zakazaniTermin.setTerminTreninga(terminTreninga1);
         zakazaniTermin.setCena(terminTreninga1.getCena());
-        zakazaniTermin.setKlijentId(klijentID);
+        zakazaniTermin.setKlijentId(klijentID.intValue());
         zakazaniTermin.setJeBesplatan(false);
 
-        List<ZakazaniTermin> zakazaniTermini = zakazaniTerminRepository.findAll();
-        zakazaniTermini.add(zakazaniTermin);
+        zakazaniTerminRepository.save(zakazaniTermin);
+        return zakazaniTermin;
+    }
 
-        return zakazaniTerminRepository.save(zakazaniTermin);
+    @Override
+    public void otkaziZakazaniTermin(ZakazaniTerminDTO zakazaniTerminDTO) {
+        zakazaniTerminRepository.deleteById(zakazaniTerminDTO.getId());
     }
 
 }
