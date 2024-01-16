@@ -1,6 +1,9 @@
 package example.controller;
 
 import antlr.Token;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import example.domen.TerminTreninga;
 import example.domen.ZakazaniTermin;
 import example.dto.FiskulturnaSalaDTO;
@@ -34,12 +37,25 @@ public class TerminTreningaController {
 
     @PostMapping("/zakazi-termin")
     @CheckSecurity(roles = {"KLIJENT"})
-    public ResponseEntity<TerminTreningaDTO> zakaziTermin(@RequestBody TerminTreningaDTO terminTreningaDTO){
-        TerminTreninga terminTreninga = TerminTreningaMapper.toEntity(terminTreningaDTO);
-        TerminTreninga zakazano = terminTreningaService.zakaziTermin(terminTreninga);
+    public ResponseEntity<ZakazaniTermin> zakaziTermin(@RequestBody String jsonRequestBody){
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        JsonNode jsonNode = null;
+        int klijentId = 0;
+        TerminTreningaDTO terminTreninga = null;
+        try {
+            jsonNode = mapper.readTree(jsonRequestBody);
+            klijentId = jsonNode.get("klijentID").asInt();
+            terminTreninga = mapper.readValue(jsonRequestBody, TerminTreningaDTO.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
 
-        return new ResponseEntity<>(TerminTreningaMapper.toDTO(zakazano),HttpStatus.OK);
+        ZakazaniTermin zakazaniTermin = zakazaniTerminService.zakaziTermin(terminTreninga,klijentId);
+
+        return new ResponseEntity<>(zakazaniTermin,HttpStatus.OK);
     }
 
     @GetMapping("/izlistaj-Termine")

@@ -30,6 +30,17 @@ public class TerminTreninga {
     @Column(name = "maksimalni_broj_ucesnika", nullable = false)
     private Integer maksimalanBrojUcesnika;
 
+    @Column(name = "cena", nullable = false)
+    private Integer cena;
+
+    public Integer getCena() {
+        return cena;
+    }
+
+    public void setCena(Integer cena) {
+        this.cena = cena;
+    }
+
     public Long getId() {
         return id;
     }

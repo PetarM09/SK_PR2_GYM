@@ -12,6 +12,16 @@ public class TerminTreningaDTO {
     private Time vremePocetka;
     private Integer maksimalanBrojUcesnika;
 
+    private Integer cena;
+
+    public Integer getCena() {
+        return cena;
+    }
+
+    public void setCena(Integer cena) {
+        this.cena = cena;
+    }
+
     public Long getId() {
         return id;
     }
