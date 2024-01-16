@@ -53,6 +53,7 @@ public class TerminTreningaController {
         if (terminTreninga.getBrojUcesnika() + 1 < terminTreninga.getMaksimalanBrojUcesnika()) {
 
             ZakazaniTermin zakazaniTermin = zakazaniTerminService.zakaziTermin(terminTreninga, klijentId);
+            terminTreningaService.povecajBrojUcesnika(terminTreninga);
             return new ResponseEntity<>(zakazaniTermin, HttpStatus.OK);
 
         } else {

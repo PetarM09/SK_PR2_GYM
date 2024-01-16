@@ -66,5 +66,15 @@ public class TerminTreningaServiceImpl implements TerminTreningaService {
             return terminTreninga;
     }
 
+    public void smanjiBrojUcesnika(TerminTreninga terminTreninga){
+        terminTreninga.setBrojUcesnika(terminTreninga.getBrojUcesnika()-1);
+        terminTreningaRepository.save(terminTreninga);
+    }
 
+    public void povecajBrojUcesnika(TerminTreninga terminTreninga){
+
+            TerminTreninga terminTreninga = terminTreningaRepository.getOne(terminTreningaDTO.getId());
+            terminTreninga.setBrojUcesnika(terminTreninga.getBrojUcesnika()+1);
+            terminTreningaRepository.save(terminTreninga);
+    }
 }

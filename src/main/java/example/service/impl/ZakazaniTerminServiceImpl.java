@@ -8,6 +8,7 @@ import example.repository.TerminTreningaRepository;
 import example.repository.TipTreningaRepository;
 import example.repository.ZakazaniTerminRepository;
 import example.security.service.TokenService;
+import example.service.TerminTreningaService;
 import example.service.ZakazaniTerminService;
 import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,8 @@ public class ZakazaniTerminServiceImpl implements ZakazaniTerminService {
 
     private TokenService tokenService;
     private final TipTreningaRepository tipTreningaRepository;
+
+    private TerminTreningaService terminTreningaService;
 
     public ZakazaniTerminServiceImpl(ZakazaniTerminRepository zakazaniTerminRepository, TerminTreningaRepository terminTreningaRepository, TokenService tokenService,
                                      TipTreningaRepository tipTreningaRepository) {
@@ -68,6 +71,8 @@ public class ZakazaniTerminServiceImpl implements ZakazaniTerminService {
 
     @Override
     public void otkaziZakazaniTermin(ZakazaniTerminDTO zakazaniTerminDTO) {
+        TerminTreninga terminTreninga = terminTreningaRepository.getOne(zakazaniTerminDTO.getIdTermina());
+        terminTreningaService.smanjiBrojUcesnika(terminTreninga);
         zakazaniTerminRepository.deleteById(zakazaniTerminDTO.getId());
     }
 

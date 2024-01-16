@@ -15,4 +15,6 @@ public interface TerminTreningaService {
     Integer brojTreninga(Long id);
 
     TerminTreninga dodajTermin(TerminTreningaDTO terminTreningaDTO);
+    void smanjiBrojUcesnika(TerminTreninga terminTreninga);
+    void povecajBrojUcesnika(TerminTreningaDTO terminTreningaDTO);
 }
