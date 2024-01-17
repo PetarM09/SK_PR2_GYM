@@ -10,7 +10,7 @@ public class UserServiceConfiguration {
     @Bean
     public RestTemplate userServiceApiClient() {
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory("http://localhost:8084/users"));
+        restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory("http://localhost:8080"));
         return restTemplate;
     }
 }

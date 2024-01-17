@@ -2,9 +2,10 @@ package example.service.impl;
 
 import example.domen.TerminTreninga;
 import example.domen.ZakazaniTermin;
+import example.dto.TerminReservationEmailDataTO;
 import example.dto.TerminTreningaDTO;
 import example.dto.ZakazaniTerminDTO;
-import example.mapper.ZakazaniTerminMapper;
+import example.helper.MessageHelper;
 import example.repository.TerminTreningaRepository;
 import example.repository.TipTreningaRepository;
 import example.repository.ZakazaniTerminRepository;
@@ -12,9 +13,14 @@ import example.security.service.TokenService;
 import example.service.TerminTreningaService;
 import example.service.ZakazaniTerminService;
 import io.jsonwebtoken.Claims;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,14 +33,23 @@ public class ZakazaniTerminServiceImpl implements ZakazaniTerminService {
     private final TipTreningaRepository tipTreningaRepository;
 
     private TerminTreningaService terminTreningaService;
+    private final RestTemplate userServiceApiClient;
+
+    private MessageHelper messageHelper;
+    private JmsTemplate jmsTemplate;
+    private String destination;
 
     public ZakazaniTerminServiceImpl(ZakazaniTerminRepository zakazaniTerminRepository, TerminTreningaRepository terminTreningaRepository, TokenService tokenService,
-                                     TipTreningaRepository tipTreningaRepository, TerminTreningaService terminTreningaService) {
+                                     TipTreningaRepository tipTreningaRepository, TerminTreningaService terminTreningaService, RestTemplate userServiceApiClient, MessageHelper messageHelper, JmsTemplate jmsTemplate, @Value("${destination.trainingScheduleNotification}") String destination) {
         this.zakazaniTerminRepository = zakazaniTerminRepository;
         this.terminTreningaRepository = terminTreningaRepository;
         this.tokenService = tokenService;
         this.tipTreningaRepository = tipTreningaRepository;
         this.terminTreningaService = terminTreningaService;
+        this.userServiceApiClient = userServiceApiClient;
+        this.messageHelper = messageHelper;
+        this.jmsTemplate = jmsTemplate;
+        this.destination = destination;
     }
 
     @Override
@@ -66,6 +81,15 @@ public class ZakazaniTerminServiceImpl implements ZakazaniTerminService {
         zakazaniTermin.setJeBesplatan(false);
 
         zakazaniTerminRepository.save(zakazaniTermin);
+
+        TerminReservationEmailDataTO terminReservationEmailDataTO = new TerminReservationEmailDataTO();
+        terminReservationEmailDataTO.setDate(terminTreninga1.getDatum());
+        terminReservationEmailDataTO.setVremePocetka(terminTreninga1.getVremePocetka());
+        terminReservationEmailDataTO.setNazivSale(terminTreninga1.getSala().getIme());
+        terminReservationEmailDataTO.setTipNotifikacije("SCHEUDLE_RESERVATION_NOTIFICATION");
+        terminReservationEmailDataTO.setKorisnikId(klijentID);
+
+        jmsTemplate.convertAndSend(destination,messageHelper.createTextMessage(terminReservationEmailDataTO));
         return zakazaniTermin;
     }
 

@@ -54,4 +54,14 @@ public class TipTreninga {
     public void setSaleKojePodrzavajuTrening(Set<FiskulturnaSala> saleKojePodrzavajuTrening) {
         this.saleKojePodrzavajuTrening = saleKojePodrzavajuTrening;
     }
+
+    @Override
+    public String toString() {
+        return "TipTreninga{" +
+                "id=" + id +
+                ", naziv='" + naziv + '\'' +
+                ", tip='" + tip + '\'' +
+                ", saleKojePodrzavajuTrening=" + saleKojePodrzavajuTrening +
+                '}';
+    }
 }

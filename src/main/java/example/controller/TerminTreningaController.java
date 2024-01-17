@@ -108,6 +108,7 @@ public class TerminTreningaController {
                 continue;
             }
             slobodniTermini.add(terminTreninga);
+            System.out.println(terminTreninga);
         }
         return new ResponseEntity<>(slobodniTermini,HttpStatus.OK);
     }
@@ -117,19 +118,21 @@ public class TerminTreningaController {
         List<TerminTreninga> svi = terminTreningaService.dohvatiSveTermine();
         List<TerminTreninga> filtirano = new ArrayList<>();
         for (TerminTreninga terminTreninga : svi){
-            if (terminTreninga.getTipTreninga().getTip().equalsIgnoreCase(tip)){
+            if (terminTreninga.getTipTreninga().getTip().equalsIgnoreCase(tip)
+                && terminTreninga.getMaksimalanBrojUcesnika() >= terminTreninga.getBrojUcesnika()){
                 filtirano.add(terminTreninga);
             }
         }
         return new ResponseEntity<>(filtirano,HttpStatus.OK);
     }
 
-    @GetMapping("/filtirajPoTipu")
+    @GetMapping("/filtrirajPoNazivu")
     public ResponseEntity<List<TerminTreninga>> filtrirajPoTipu(@RequestBody String tip){
         List<TerminTreninga> svi = terminTreningaService.dohvatiSveTermine();
         List<TerminTreninga> filtirano = new ArrayList<>();
         for (TerminTreninga terminTreninga : svi){
-            if (terminTreninga.getTipTreninga().getNaziv().equalsIgnoreCase(tip)){
+            if (terminTreninga.getTipTreninga().getNaziv().equalsIgnoreCase(tip)
+                && terminTreninga.getMaksimalanBrojUcesnika() >= terminTreninga.getBrojUcesnika()){
                 filtirano.add(terminTreninga);
             }
         }
@@ -143,8 +146,10 @@ public class TerminTreningaController {
 
         for (TerminTreninga terminTreninga : svi){
             LocalDate localDate = terminTreninga.getDatum().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
-
-            if (localDate.getDayOfWeek().toString().equalsIgnoreCase(dan)){
+            System.out.println(localDate.getDayOfWeek().toString());
+            System.out.println(dan);
+            if (localDate.getDayOfWeek().toString().equalsIgnoreCase(dan)
+            && terminTreninga.getMaksimalanBrojUcesnika() >= terminTreninga.getBrojUcesnika()){
                 filtirano.add(terminTreninga);
             }
         }
