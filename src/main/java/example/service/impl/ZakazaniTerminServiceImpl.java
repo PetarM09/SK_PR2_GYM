@@ -38,9 +38,13 @@ public class ZakazaniTerminServiceImpl implements ZakazaniTerminService {
     private MessageHelper messageHelper;
     private JmsTemplate jmsTemplate;
     private String destination;
+    private String destinationOtkazi;
 
     public ZakazaniTerminServiceImpl(ZakazaniTerminRepository zakazaniTerminRepository, TerminTreningaRepository terminTreningaRepository, TokenService tokenService,
-                                     TipTreningaRepository tipTreningaRepository, TerminTreningaService terminTreningaService, RestTemplate userServiceApiClient, MessageHelper messageHelper, JmsTemplate jmsTemplate, @Value("${destination.trainingScheduleNotification}") String destination) {
+                                     TipTreningaRepository tipTreningaRepository, TerminTreningaService terminTreningaService,
+                                     RestTemplate userServiceApiClient, MessageHelper messageHelper, JmsTemplate jmsTemplate,
+                                     @Value("${destination.trainingScheduleNotification}") String destination,
+                                     @Value("${destination.otkazivanjeTreninga}" ) String destinationOtkazi) {
         this.zakazaniTerminRepository = zakazaniTerminRepository;
         this.terminTreningaRepository = terminTreningaRepository;
         this.tokenService = tokenService;
@@ -50,6 +54,7 @@ public class ZakazaniTerminServiceImpl implements ZakazaniTerminService {
         this.messageHelper = messageHelper;
         this.jmsTemplate = jmsTemplate;
         this.destination = destination;
+        this.destinationOtkazi = destinationOtkazi;
     }
 
     @Override
@@ -100,6 +105,15 @@ public class ZakazaniTerminServiceImpl implements ZakazaniTerminService {
             terminTreningaService.smanjiBrojUcesnika(terminTreninga);
             terminTreningaService.smanjiKlijentuTreninge(zakazaniTerminDTO.getKlijentId());
             zakazaniTerminRepository.deleteById(zakazaniTerminDTO.getId());
+
+            TerminReservationEmailDataTO terminReservationEmailDataTO = new TerminReservationEmailDataTO();
+            terminReservationEmailDataTO.setDate(terminTreninga.getDatum());
+            terminReservationEmailDataTO.setVremePocetka(terminTreninga.getVremePocetka());
+            terminReservationEmailDataTO.setNazivSale(terminTreninga.getSala().getIme());
+            terminReservationEmailDataTO.setTipNotifikacije("SCHEUDLE_CANCEL_NOTIFICATION");
+            terminReservationEmailDataTO.setKorisnikId(Long.valueOf(zakazaniTerminDTO.getKlijentId()));
+
+            jmsTemplate.convertAndSend(destinationOtkazi,messageHelper.createTextMessage(terminReservationEmailDataTO));
         }
     }
 }
