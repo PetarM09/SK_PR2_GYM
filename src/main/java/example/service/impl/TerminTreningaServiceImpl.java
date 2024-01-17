@@ -25,7 +25,7 @@ public class TerminTreningaServiceImpl implements TerminTreningaService {
     private final TerminTreningaRepository terminTreningaRepository;
     private final FiskulturnaSalaRepository fiskulturnaSalaRepository;
     private final TipTreningaRepository tipTreningaRepository;
-    private Retry retry;
+    private Retry terminServiceRetry;
     private final RestTemplate userServiceApiClient;
 
     private TokenService tokenService;
@@ -34,7 +34,7 @@ public class TerminTreningaServiceImpl implements TerminTreningaService {
         this.terminTreningaRepository = terminTreningaRepository;
         this.fiskulturnaSalaRepository = fiskulturnaSalaRepository;
         this.tipTreningaRepository = tipTreningaRepository;
-        this.retry = retry;
+        this.terminServiceRetry = retry;
         this.userServiceApiClient = userServiceApiClient;
         this.tokenService = tokenService;
     }
@@ -53,7 +53,7 @@ public class TerminTreningaServiceImpl implements TerminTreningaService {
     }
 
     public Integer brojTreninga(Long id){
-        return Integer.valueOf(retry.executeSupplier(()->{
+        return Integer.valueOf(terminServiceRetry.executeSupplier(()->{
             RestTemplate restTemplate = new RestTemplate();
             return restTemplate.getForObject("http://localhost:8080/korisnici/brojTreninga/"+id, String.class);
         }));

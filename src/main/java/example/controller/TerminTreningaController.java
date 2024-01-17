@@ -57,6 +57,20 @@ public class TerminTreningaController {
             return new ResponseEntity<>(null, HttpStatus.valueOf("Maksimalan broj je dostignut"));
         }
     }
+    @DeleteMapping("/otkaziTermin")
+    @CheckSecurity(roles = {"KLIJENT","MENADZER"})
+    public ResponseEntity<String> otkaziZakazaniTermin(@RequestBody String jsonRequestBody, @RequestHeader("Authorization") String authorization){
+        ZakazaniTerminDTO zakazaniTerminDTO = null;
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            zakazaniTerminDTO = mapper.readValue(jsonRequestBody, ZakazaniTerminDTO.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        zakazaniTerminService.otkaziZakazaniTermin(zakazaniTerminDTO);
+        return new ResponseEntity<>("Termin " + zakazaniTerminDTO.getId() + " otkazan uspesno.", HttpStatus.OK);
+    }
 
     @PostMapping("/dodaj-termin")
     public ResponseEntity<TerminTreninga> dodajTermin(@RequestBody String jsonRequestBody) {
@@ -139,42 +153,19 @@ public class TerminTreningaController {
     }
 
 
-    @DeleteMapping("/otkaziTermin/{id}")
-    @CheckSecurity(roles = {"KLIJENT","MENADZER"})
-    public ResponseEntity<String> otkaziZakazaniTermin(@RequestBody String jsonRequestBody){
-        ZakazaniTerminDTO zakazaniTerminDTO = null;
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            zakazaniTerminDTO = mapper.readValue(jsonRequestBody, ZakazaniTerminDTO.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
-        zakazaniTerminService.otkaziZakazaniTermin(zakazaniTerminDTO);
-        return new ResponseEntity<>("Termin " + zakazaniTerminDTO.getId() + " otkazan uspesno.", HttpStatus.OK);
-    }
-
     @GetMapping("/izlistaj-Termine-Korisnika")
-    public ResponseEntity<List<TerminTreninga>> izlistajTermineKorisnika(@RequestHeader("Authorization") String authorization){
+    public ResponseEntity<List<ZakazaniTermin>> izlistajTermineKorisnika(@RequestHeader("Authorization") String authorization){
 
         List<ZakazaniTermin> zakazaniTermini = zakazaniTerminService.dohvatiZakazaneTreninge();
-
-        List<TerminTreninga> termini = new ArrayList<>();
+        List<ZakazaniTermin> prikazi = new ArrayList<>();
         Long id = tokenService.parseId(authorization);
-
-        List<TerminTreninga> sviTermini = terminTreningaService.dohvatiSveTermine();
-
-        for (ZakazaniTermin zakazaniTermin : zakazaniTermini){
-            if (zakazaniTermin.getKlijentId() == id.intValue()) {
-                for (TerminTreninga terminTreninga : sviTermini) {
-                    if (zakazaniTermin.getTerminTreninga().getId() == terminTreninga.getId()) {
-                        termini.add(terminTreninga);
-                    }
-                }
+        for(ZakazaniTermin zakazaniTermin : zakazaniTermini){
+            if(zakazaniTermin.getKlijentId() == id.intValue()){
+                prikazi.add(zakazaniTermin);
             }
         }
 
-        return new ResponseEntity<>(termini,HttpStatus.OK);
+        return new ResponseEntity<>(prikazi,HttpStatus.OK);
     }
 
     @CheckSecurity(roles = {"ADMIN","MENADZER"})
