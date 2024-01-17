@@ -113,44 +113,62 @@ public class TerminTreningaController {
         return new ResponseEntity<>(slobodniTermini,HttpStatus.OK);
     }
 
-    @GetMapping("/filtirajPoIndividualni-Grupni")
-    public ResponseEntity<List<TerminTreninga>> filtirajPoIndividualniGrupni(@RequestBody String tip){
+    @PostMapping("/filtirajPoIndividualni-Grupni")
+    public ResponseEntity<List<ZakazaniTermin>> filtirajPoIndividualniGrupni(@RequestBody String tip, @RequestHeader("Authorization") String authorization){
         List<TerminTreninga> svi = terminTreningaService.dohvatiSveTermine();
-        List<TerminTreninga> filtirano = new ArrayList<>();
+        List<ZakazaniTermin> filtirano = new ArrayList<>();
+        List<ZakazaniTermin> sviZakazani = zakazaniTerminService.dohvatiZakazaneTreninge();
+        Long id = tokenService.parseId(authorization);
         for (TerminTreninga terminTreninga : svi){
             if (terminTreninga.getTipTreninga().getTip().equalsIgnoreCase(tip)
                 && terminTreninga.getMaksimalanBrojUcesnika() >= terminTreninga.getBrojUcesnika()){
-                filtirano.add(terminTreninga);
+                for (ZakazaniTermin zakazaniTermin : sviZakazani){
+                    if (zakazaniTermin.getTerminTreninga().getId() == terminTreninga.getId()
+                    && zakazaniTermin.getKlijentId() == id.intValue()){
+                        filtirano.add(zakazaniTermin);
+                    }
+                }
             }
         }
         return new ResponseEntity<>(filtirano,HttpStatus.OK);
     }
 
-    @GetMapping("/filtrirajPoNazivu")
-    public ResponseEntity<List<TerminTreninga>> filtrirajPoTipu(@RequestBody String tip){
+    @PostMapping("/filtrirajPoNazivu")
+    public ResponseEntity<List<ZakazaniTermin>> filtrirajPoTipu(@RequestBody String tip, @RequestHeader("Authorization") String authorization){
         List<TerminTreninga> svi = terminTreningaService.dohvatiSveTermine();
-        List<TerminTreninga> filtirano = new ArrayList<>();
+        List<ZakazaniTermin> filtirano = new ArrayList<>();
+        List<ZakazaniTermin> sviZakazani = zakazaniTerminService.dohvatiZakazaneTreninge();
+        Long id = tokenService.parseId(authorization);
         for (TerminTreninga terminTreninga : svi){
             if (terminTreninga.getTipTreninga().getNaziv().equalsIgnoreCase(tip)
                 && terminTreninga.getMaksimalanBrojUcesnika() >= terminTreninga.getBrojUcesnika()){
-                filtirano.add(terminTreninga);
+                for (ZakazaniTermin zakazaniTermin : sviZakazani){
+                    if (zakazaniTermin.getTerminTreninga().getId() == terminTreninga.getId()
+                    && zakazaniTermin.getKlijentId() == id.intValue()){
+                        filtirano.add(zakazaniTermin);
+                    }
+                }
             }
         }
         return new ResponseEntity<>(filtirano,HttpStatus.OK);
     }
 
-    @GetMapping("/filtirajPoDanu")
-    public ResponseEntity<List<TerminTreninga>> filtrirajPoDanu(@RequestBody String dan){
+    @PostMapping("/filtirajPoDanu")
+    public ResponseEntity<List<ZakazaniTermin>> filtrirajPoDanu(@RequestBody String dan, @RequestHeader("Authorization") String authorization){
         List<TerminTreninga> svi = terminTreningaService.dohvatiSveTermine();
-        List<TerminTreninga> filtirano = new ArrayList<>();
-
+        List<ZakazaniTermin> filtirano = new ArrayList<>();
+        List<ZakazaniTermin> sviZakazani = zakazaniTerminService.dohvatiZakazaneTreninge();
+        Long id = tokenService.parseId(authorization);
         for (TerminTreninga terminTreninga : svi){
             LocalDate localDate = terminTreninga.getDatum().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
-            System.out.println(localDate.getDayOfWeek().toString());
-            System.out.println(dan);
             if (localDate.getDayOfWeek().toString().equalsIgnoreCase(dan)
             && terminTreninga.getMaksimalanBrojUcesnika() >= terminTreninga.getBrojUcesnika()){
-                filtirano.add(terminTreninga);
+                for (ZakazaniTermin zakazaniTermin : sviZakazani){
+                    if (zakazaniTermin.getTerminTreninga().getId() == terminTreninga.getId()
+                        && zakazaniTermin.getKlijentId() == id.intValue()){
+                        filtirano.add(zakazaniTermin);
+                    }
+                }
             }
         }
         return new ResponseEntity<>(filtirano,HttpStatus.OK);
@@ -188,5 +206,32 @@ public class TerminTreningaController {
             }
         }
         return new ResponseEntity<>(termini,HttpStatus.OK);
+    }
+
+    @GetMapping("/izlizstaj-slobodno-za-salu/{imeSale}")
+    public ResponseEntity<List<TerminTreninga>> izlistajSlobodneTermineZaSalu(@PathVariable("imeSale") String imeSale){
+        List<TerminTreninga> listaTermina = terminTreningaService.dohvatiSveTermine();
+        List<TerminTreninga> slobodniTermini = new ArrayList<>();
+        for (TerminTreninga terminTreninga : listaTermina){
+            if(terminTreninga.getMaksimalanBrojUcesnika() <= terminTreninga.getBrojUcesnika()){
+                continue;
+            }
+            if(terminTreninga.getSala().getIme().equalsIgnoreCase(imeSale)){
+                slobodniTermini.add(terminTreninga);
+            }
+        }
+        return new ResponseEntity<>(slobodniTermini,HttpStatus.OK);
+    }
+
+    @GetMapping("/izlistaj-zauzete-termine-za-salu/{imeSale}")
+    public ResponseEntity<List<ZakazaniTermin>> izlistajZauzeteTermineZaSalu(@PathVariable("imeSale") String imeSale){
+        List<ZakazaniTermin> zakazaniTermini = zakazaniTerminService.dohvatiZakazaneTreninge();
+        List<ZakazaniTermin> zauzetiTermini = new ArrayList<>();
+        for (ZakazaniTermin zakazaniTermin : zakazaniTermini){
+            if(zakazaniTermin.getTerminTreninga().getSala().getIme().equalsIgnoreCase(imeSale)){
+                zauzetiTermini.add(zakazaniTermin);
+            }
+        }
+        return new ResponseEntity<>(zauzetiTermini,HttpStatus.OK);
     }
 }
