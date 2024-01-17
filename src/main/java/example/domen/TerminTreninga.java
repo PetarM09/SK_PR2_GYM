@@ -100,4 +100,18 @@ public class TerminTreninga {
     public void setMaksimalanBrojUcesnika(Integer maksimalanBrojUcesnika) {
         this.maksimalanBrojUcesnika = maksimalanBrojUcesnika;
     }
+
+    @Override
+    public String toString() {
+        return "TerminTreninga{" +
+                "id=" + id +
+                ", sala=" + sala +
+                ", tipTreninga=" + tipTreninga +
+                ", datum=" + datum +
+                ", vremePocetka=" + vremePocetka +
+                ", maksimalanBrojUcesnika=" + maksimalanBrojUcesnika +
+                ", cena=" + cena +
+                ", brojUcesnika=" + brojUcesnika +
+                '}';
+    }
 }

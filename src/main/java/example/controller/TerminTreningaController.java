@@ -57,7 +57,7 @@ public class TerminTreningaController {
             return new ResponseEntity<>(null, HttpStatus.valueOf("Maksimalan broj je dostignut"));
         }
     }
-    @DeleteMapping("/otkaziTermin")
+    @PostMapping("/otkaziTermin")
     @CheckSecurity(roles = {"KLIJENT","MENADZER"})
     public ResponseEntity<String> otkaziZakazaniTermin(@RequestBody String jsonRequestBody, @RequestHeader("Authorization") String authorization){
         ZakazaniTerminDTO zakazaniTerminDTO = null;
@@ -67,7 +67,6 @@ public class TerminTreningaController {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-
         zakazaniTerminService.otkaziZakazaniTermin(zakazaniTerminDTO);
         return new ResponseEntity<>("Termin " + zakazaniTerminDTO.getId() + " otkazan uspesno.", HttpStatus.OK);
     }

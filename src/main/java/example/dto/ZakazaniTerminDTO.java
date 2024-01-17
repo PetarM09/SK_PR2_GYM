@@ -1,5 +1,7 @@
 package example.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ZakazaniTerminDTO {
 
     private Long id;
@@ -7,6 +9,8 @@ public class ZakazaniTerminDTO {
     private Integer klijentId;
     private Integer cena;
     private Boolean jeBesplatan;
+    @JsonProperty("terminTreningaDto")
+    private TerminTreningaDTO terminTreningaDTO;
 
     public Long getId() {
         return id;
@@ -48,4 +52,23 @@ public class ZakazaniTerminDTO {
         this.jeBesplatan = jeBesplatan;
     }
 
+    public TerminTreningaDTO getTerminTreningaDTO() {
+        return terminTreningaDTO;
+    }
+
+    public void setTerminTreningaDTO(TerminTreningaDTO terminTreningaDTO) {
+        this.terminTreningaDTO = terminTreningaDTO;
+    }
+
+    @Override
+    public String toString() {
+        return "ZakazaniTerminDTO{" +
+                "id=" + id +
+                ", idTermina=" + idTermina +
+                ", klijentId=" + klijentId +
+                ", cena=" + cena +
+                ", jeBesplatan=" + jeBesplatan +
+                ", terminTreningaDTO=" + terminTreningaDTO +
+                '}';
+    }
 }

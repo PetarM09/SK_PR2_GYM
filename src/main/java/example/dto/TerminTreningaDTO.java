@@ -97,4 +97,20 @@ public class TerminTreningaDTO {
     public void setBrojUcesnika(Integer brojUcesnika) {
         this.brojUcesnika = brojUcesnika;
     }
+
+    @Override
+    public String toString() {
+        return "TerminTreningaDTO{" +
+                "id=" + id +
+                ", idSale=" + idSale +
+                ", idTreninga=" + idTreninga +
+                ", datum=" + datum +
+                ", vremePocetka=" + vremePocetka +
+                ", maksimalanBrojUcesnika=" + maksimalanBrojUcesnika +
+                ", brojUcesnika=" + brojUcesnika +
+                ", nazivSale='" + nazivSale + '\'' +
+                ", nazivTreninga='" + nazivTreninga + '\'' +
+                ", cena=" + cena +
+                '}';
+    }
 }

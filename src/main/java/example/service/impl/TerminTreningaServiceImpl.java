@@ -75,7 +75,9 @@ public class TerminTreningaServiceImpl implements TerminTreningaService {
     }
 
     public void smanjiBrojUcesnika(TerminTreninga terminTreninga){
+        System.out.println(terminTreninga.getBrojUcesnika());
         terminTreninga.setBrojUcesnika(terminTreninga.getBrojUcesnika()-1);
+        System.out.println(terminTreninga.getBrojUcesnika());
         terminTreningaRepository.save(terminTreninga);
     }
 
@@ -95,5 +97,17 @@ public class TerminTreningaServiceImpl implements TerminTreningaService {
 
         HttpEntity<KorisniciDto> requestEntity = new HttpEntity<>(korisniciDto, headers);
         ResponseEntity<String> response = userServiceApiClient.postForEntity("/api/korisnici/povecaj-broj-treninga", requestEntity,  String.class);
+    }
+
+    @Override
+    public void smanjiKlijentuTreninge(long klijentId) {
+        KorisniciDto korisniciDto = new KorisniciDto();
+        korisniciDto.setId((int) klijentId);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<KorisniciDto> requestEntity = new HttpEntity<>(korisniciDto, headers);
+        ResponseEntity<String> response = userServiceApiClient.postForEntity("/api/korisnici/smanji-broj-treninga", requestEntity,  String.class);
     }
 }

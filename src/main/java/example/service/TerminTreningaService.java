@@ -19,4 +19,5 @@ public interface TerminTreningaService {
     void povecajBrojUcesnika(TerminTreningaDTO terminTreningaDTO);
 
     void povecajKlijentuTreninge(long klijentId);
+    void smanjiKlijentuTreninge(long klijentId);
 }

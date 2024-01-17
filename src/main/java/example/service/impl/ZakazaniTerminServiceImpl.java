@@ -58,7 +58,7 @@ public class ZakazaniTerminServiceImpl implements ZakazaniTerminService {
     @Override
     public ZakazaniTermin zakaziTermin(TerminTreningaDTO terminTreninga, Long klijentID) {
         ZakazaniTermin zakazaniTermin = new ZakazaniTermin();
-        TerminTreninga terminTreninga1 = terminTreningaRepository.getOne(terminTreninga.getIdTreninga());
+        TerminTreninga terminTreninga1 = terminTreningaRepository.getOne(terminTreninga.getId());
 
         zakazaniTermin.setTerminTreninga(terminTreninga1);
         zakazaniTermin.setCena(terminTreninga1.getCena());
@@ -71,8 +71,11 @@ public class ZakazaniTerminServiceImpl implements ZakazaniTerminService {
 
     @Override
     public void otkaziZakazaniTermin(ZakazaniTerminDTO zakazaniTerminDTO) {
-        TerminTreninga terminTreninga = terminTreningaRepository.getOne(zakazaniTerminDTO.getIdTermina());
-        terminTreningaService.smanjiBrojUcesnika(terminTreninga);
-        zakazaniTerminRepository.deleteById(zakazaniTerminDTO.getId());
+        if(zakazaniTerminRepository.existsById(zakazaniTerminDTO.getId())){
+            TerminTreninga terminTreninga = terminTreningaRepository.getOne(zakazaniTerminDTO.getTerminTreningaDTO().getId());
+            terminTreningaService.smanjiBrojUcesnika(terminTreninga);
+            terminTreningaService.smanjiKlijentuTreninge(zakazaniTerminDTO.getKlijentId());
+            zakazaniTerminRepository.deleteById(zakazaniTerminDTO.getId());
+        }
     }
 }
