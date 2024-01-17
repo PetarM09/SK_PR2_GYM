@@ -11,9 +11,26 @@ public class TerminTreningaDTO {
     private Date datum;
     private Time vremePocetka;
     private Integer maksimalanBrojUcesnika;
-
     private Integer brojUcesnika;
 
+    private String nazivSale;
+    private String nazivTreninga;
+
+    public String getNazivSale() {
+        return nazivSale;
+    }
+
+    public void setNazivSale(String nazivSale) {
+        this.nazivSale = nazivSale;
+    }
+
+    public String getNazivTreninga() {
+        return nazivTreninga;
+    }
+
+    public void setNazivTreninga(String nazivTreninga) {
+        this.nazivTreninga = nazivTreninga;
+    }
 
     private Integer cena;
 

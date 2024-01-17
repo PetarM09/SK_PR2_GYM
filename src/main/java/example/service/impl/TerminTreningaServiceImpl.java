@@ -1,6 +1,7 @@
 package example.service.impl;
 
 import example.domen.TerminTreninga;
+import example.dto.KorisniciDto;
 import example.dto.TerminTreningaDTO;
 import example.repository.FiskulturnaSalaRepository;
 import example.repository.TerminTreningaRepository;
@@ -8,6 +9,10 @@ import example.repository.TipTreningaRepository;
 import example.security.service.TokenService;
 import example.service.TerminTreningaService;
 import io.github.resilience4j.retry.Retry;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -21,13 +26,16 @@ public class TerminTreningaServiceImpl implements TerminTreningaService {
     private final FiskulturnaSalaRepository fiskulturnaSalaRepository;
     private final TipTreningaRepository tipTreningaRepository;
     private Retry retry;
+    private final RestTemplate userServiceApiClient;
+
     private TokenService tokenService;
 
-    public TerminTreningaServiceImpl(TerminTreningaRepository terminTreningaRepository, FiskulturnaSalaRepository fiskulturnaSalaRepository, TipTreningaRepository tipTreningaRepository, Retry retry, TokenService tokenService) {
+    public TerminTreningaServiceImpl(TerminTreningaRepository terminTreningaRepository, FiskulturnaSalaRepository fiskulturnaSalaRepository, TipTreningaRepository tipTreningaRepository, Retry retry, RestTemplate userServiceApiClient, TokenService tokenService) {
         this.terminTreningaRepository = terminTreningaRepository;
         this.fiskulturnaSalaRepository = fiskulturnaSalaRepository;
         this.tipTreningaRepository = tipTreningaRepository;
         this.retry = retry;
+        this.userServiceApiClient = userServiceApiClient;
         this.tokenService = tokenService;
     }
 
@@ -72,9 +80,20 @@ public class TerminTreningaServiceImpl implements TerminTreningaService {
     }
 
     public void povecajBrojUcesnika(TerminTreningaDTO terminTreningaDTO){
-
             TerminTreninga terminTreninga = terminTreningaRepository.getOne(terminTreningaDTO.getId());
             terminTreninga.setBrojUcesnika(terminTreninga.getBrojUcesnika()+1);
             terminTreningaRepository.save(terminTreninga);
+    }
+
+    @Override
+    public void povecajKlijentuTreninge(long klijentId) {
+        KorisniciDto korisniciDto = new KorisniciDto();
+        korisniciDto.setId((int) klijentId);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<KorisniciDto> requestEntity = new HttpEntity<>(korisniciDto, headers);
+        ResponseEntity<String> response = userServiceApiClient.postForEntity("/api/korisnici/povecaj-broj-treninga", requestEntity,  String.class);
     }
 }

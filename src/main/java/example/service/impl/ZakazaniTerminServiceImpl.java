@@ -4,6 +4,7 @@ import example.domen.TerminTreninga;
 import example.domen.ZakazaniTermin;
 import example.dto.TerminTreningaDTO;
 import example.dto.ZakazaniTerminDTO;
+import example.mapper.ZakazaniTerminMapper;
 import example.repository.TerminTreningaRepository;
 import example.repository.TipTreningaRepository;
 import example.repository.ZakazaniTerminRepository;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -23,18 +23,18 @@ import java.util.List;
 public class ZakazaniTerminServiceImpl implements ZakazaniTerminService {
     private ZakazaniTerminRepository zakazaniTerminRepository;
     private TerminTreningaRepository terminTreningaRepository;
-
     private TokenService tokenService;
     private final TipTreningaRepository tipTreningaRepository;
 
     private TerminTreningaService terminTreningaService;
 
     public ZakazaniTerminServiceImpl(ZakazaniTerminRepository zakazaniTerminRepository, TerminTreningaRepository terminTreningaRepository, TokenService tokenService,
-                                     TipTreningaRepository tipTreningaRepository) {
+                                     TipTreningaRepository tipTreningaRepository, TerminTreningaService terminTreningaService) {
         this.zakazaniTerminRepository = zakazaniTerminRepository;
         this.terminTreningaRepository = terminTreningaRepository;
         this.tokenService = tokenService;
         this.tipTreningaRepository = tipTreningaRepository;
+        this.terminTreningaService = terminTreningaService;
     }
 
     @Override
@@ -75,5 +75,4 @@ public class ZakazaniTerminServiceImpl implements ZakazaniTerminService {
         terminTreningaService.smanjiBrojUcesnika(terminTreninga);
         zakazaniTerminRepository.deleteById(zakazaniTerminDTO.getId());
     }
-
 }

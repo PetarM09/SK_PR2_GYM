@@ -1,16 +1,13 @@
 package example.controller;
 
-import antlr.Token;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import example.domen.TerminTreninga;
 import example.domen.ZakazaniTermin;
-import example.dto.FiskulturnaSalaDTO;
 import example.dto.TerminTreningaDTO;
-import example.dto.ViseTerminaTreninga;
 import example.dto.ZakazaniTerminDTO;
-import example.mapper.TerminTreningaMapper;
+import example.mapper.ZakazaniTerminMapper;
 import example.security.CheckSecurity;
 import example.security.service.TokenService;
 import example.service.TerminTreningaService;
@@ -37,8 +34,7 @@ public class TerminTreningaController {
     }
 
     @PostMapping("/zakazi-termin")
-    public ResponseEntity<ZakazaniTermin> zakaziTermin(@RequestHeader("Authorization") String authorization, @RequestBody String jsonRequestBody) {
-
+    public ResponseEntity<ZakazaniTerminDTO> zakaziTermin(@RequestHeader("Authorization") String authorization, @RequestBody String jsonRequestBody) {
         ObjectMapper mapper = new ObjectMapper();
 
         long klijentId = 0;
@@ -50,11 +46,12 @@ public class TerminTreningaController {
             throw new RuntimeException(e);
         }
 
-        if (terminTreninga.getBrojUcesnika() + 1 < terminTreninga.getMaksimalanBrojUcesnika()) {
-
+        if (terminTreninga.getBrojUcesnika() + 1 <= terminTreninga.getMaksimalanBrojUcesnika()) {
             ZakazaniTermin zakazaniTermin = zakazaniTerminService.zakaziTermin(terminTreninga, klijentId);
             terminTreningaService.povecajBrojUcesnika(terminTreninga);
-            return new ResponseEntity<>(zakazaniTermin, HttpStatus.OK);
+            terminTreningaService.povecajKlijentuTreninge(klijentId);
+            ZakazaniTerminDTO zakazaniTerminDTO = ZakazaniTerminMapper.toDTO(zakazaniTermin);
+            return new ResponseEntity<>(zakazaniTerminDTO, HttpStatus.OK);
 
         } else {
             return new ResponseEntity<>(null, HttpStatus.valueOf("Maksimalan broj je dostignut"));
@@ -94,15 +91,10 @@ public class TerminTreningaController {
         Long id = tokenService.parseId(authorization);
 
         for (TerminTreninga terminTreninga : listaTermina){
-            boolean slobodan = true;
-            for (ZakazaniTermin zakazaniTermin : zakazaniTermini){
-                if (zakazaniTermin.getTerminTreninga().getId() == terminTreninga.getId()){
-                    slobodan = false;
-                }
+            if(terminTreninga.getMaksimalanBrojUcesnika() <= terminTreninga.getBrojUcesnika()){
+                continue;
             }
-            if (slobodan){
-                slobodniTermini.add(terminTreninga);
-            }
+            slobodniTermini.add(terminTreninga);
         }
         return new ResponseEntity<>(slobodniTermini,HttpStatus.OK);
     }

@@ -29,6 +29,7 @@ public class TerminTreningaMapper {
         terminTreningaDTO.setDatum(terminTreninga.getDatum());
         terminTreningaDTO.setVremePocetka(terminTreninga.getVremePocetka());
         terminTreningaDTO.setMaksimalanBrojUcesnika(terminTreninga.getMaksimalanBrojUcesnika());
+        terminTreningaDTO.setBrojUcesnika(terminTreninga.getBrojUcesnika());
         return terminTreningaDTO;
     }
 
@@ -40,6 +41,7 @@ public class TerminTreningaMapper {
         terminTreninga.setDatum(terminTreningaDTO.getDatum());
         terminTreninga.setVremePocetka(terminTreningaDTO.getVremePocetka());
         terminTreninga.setMaksimalanBrojUcesnika(terminTreningaDTO.getMaksimalanBrojUcesnika());
+        terminTreninga.setBrojUcesnika(terminTreningaDTO.getBrojUcesnika());
         return terminTreninga;
     }
 
