@@ -69,6 +69,7 @@ public class TerminTreningaServiceImpl implements TerminTreningaService {
             terminTreninga.setTipTreninga(tipTreningaRepository.getOne(terminTreningaDTO.getIdTreninga()));
             terminTreninga.setBrojUcesnika(0);
             terminTreninga.setMaksimalanBrojUcesnika(terminTreningaDTO.getMaksimalanBrojUcesnika());
+            terminTreninga.setVremePocetka(terminTreningaDTO.getVremePocetka());
 
             terminTreningaRepository.save(terminTreninga);
             return terminTreninga;
@@ -109,5 +110,10 @@ public class TerminTreningaServiceImpl implements TerminTreningaService {
 
         HttpEntity<KorisniciDto> requestEntity = new HttpEntity<>(korisniciDto, headers);
         ResponseEntity<String> response = userServiceApiClient.postForEntity("/api/korisnici/smanji-broj-treninga", requestEntity,  String.class);
+    }
+
+    @Override
+    public void obrisiTermin(Long id) {
+        terminTreningaRepository.deleteById(id);
     }
 }

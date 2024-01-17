@@ -20,4 +20,6 @@ public interface TerminTreningaService {
 
     void povecajKlijentuTreninge(long klijentId);
     void smanjiKlijentuTreninge(long klijentId);
+
+    void obrisiTermin(Long id);
 }

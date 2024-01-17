@@ -1,11 +1,14 @@
 package example.domen;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.sql.Time;
 
 @Entity
 @Table(name = "termin_treninga")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class TerminTreninga {
 
     @Id

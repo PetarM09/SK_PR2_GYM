@@ -16,4 +16,6 @@ public interface ZakazaniTerminService{
     ZakazaniTermin zakaziTermin(TerminTreningaDTO terminTreninga, Long klijentID);
 
     void otkaziZakazaniTermin(ZakazaniTerminDTO zakazaniTerminDTO);
+
+    void obrisiZakazaniTermin(Long id);
 }

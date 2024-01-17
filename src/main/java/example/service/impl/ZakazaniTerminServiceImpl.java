@@ -116,4 +116,9 @@ public class ZakazaniTerminServiceImpl implements ZakazaniTerminService {
             jmsTemplate.convertAndSend(destinationOtkazi,messageHelper.createTextMessage(terminReservationEmailDataTO));
         }
     }
+
+    @Override
+    public void obrisiZakazaniTermin(Long id) {
+        zakazaniTerminRepository.deleteById(id);
+    }
 }

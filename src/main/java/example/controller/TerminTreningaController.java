@@ -72,22 +72,23 @@ public class TerminTreningaController {
     }
 
     @PostMapping("/dodaj-termin")
-    public ResponseEntity<TerminTreninga> dodajTermin(@RequestBody String jsonRequestBody) {
-
-        ObjectMapper mapper = new ObjectMapper();
-
-        JsonNode jsonNode = null;
-        TerminTreningaDTO terminTreningaDTO = null;
-        try {
-            jsonNode = mapper.readTree(jsonRequestBody);
-            terminTreningaDTO = mapper.readValue(jsonRequestBody, TerminTreningaDTO.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
+    public ResponseEntity<String> dodajTermin(@RequestBody TerminTreningaDTO terminTreningaDTO) {
         TerminTreninga terminTreninga = terminTreningaService.dodajTermin(terminTreningaDTO);
-        return new ResponseEntity<>(terminTreninga, HttpStatus.OK);
+        return new ResponseEntity<>("Uspesno", HttpStatus.OK);
 
+    }
+
+    @DeleteMapping("/obrisi-termin/{id}")
+    public ResponseEntity<String> obrisiTermin(@PathVariable("id") Long id) {
+        List<ZakazaniTermin> zakazaniTermini = zakazaniTerminService.dohvatiZakazaneTreninge();
+        System.out.println(id);
+        for (ZakazaniTermin zakazaniTermin : zakazaniTermini){
+            if(zakazaniTermin.getTerminTreninga().getId() == id){
+                zakazaniTerminService.obrisiZakazaniTermin(zakazaniTermin.getId());
+            }
+        }
+        terminTreningaService.obrisiTermin(id);
+        return new ResponseEntity<>("Termin " + id + " obrisan uspesno.", HttpStatus.OK);
     }
 
     @GetMapping("/izlistaj-Termine")
