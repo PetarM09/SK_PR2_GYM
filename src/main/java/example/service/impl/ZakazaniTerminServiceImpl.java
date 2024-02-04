@@ -13,14 +13,13 @@ import example.security.service.TokenService;
 import example.service.TerminTreningaService;
 import example.service.ZakazaniTerminService;
 import io.jsonwebtoken.Claims;
+import io.github.resilience4j.retry.Retry;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,12 +38,13 @@ public class ZakazaniTerminServiceImpl implements ZakazaniTerminService {
     private JmsTemplate jmsTemplate;
     private String destination;
     private String destinationOtkazi;
+    private Retry userServiceRetry;
 
     public ZakazaniTerminServiceImpl(ZakazaniTerminRepository zakazaniTerminRepository, TerminTreningaRepository terminTreningaRepository, TokenService tokenService,
                                      TipTreningaRepository tipTreningaRepository, TerminTreningaService terminTreningaService,
                                      RestTemplate userServiceApiClient, MessageHelper messageHelper, JmsTemplate jmsTemplate,
                                      @Value("${destination.trainingScheduleNotification}") String destination,
-                                     @Value("${destination.otkazivanjeTreninga}" ) String destinationOtkazi) {
+                                     @Value("${destination.otkazivanjeTreninga}" ) String destinationOtkazi, Retry userServiceRetry) {
         this.zakazaniTerminRepository = zakazaniTerminRepository;
         this.terminTreningaRepository = terminTreningaRepository;
         this.tokenService = tokenService;
@@ -55,6 +55,7 @@ public class ZakazaniTerminServiceImpl implements ZakazaniTerminService {
         this.jmsTemplate = jmsTemplate;
         this.destination = destination;
         this.destinationOtkazi = destinationOtkazi;
+        this.userServiceRetry = userServiceRetry;
     }
 
     @Override
@@ -84,7 +85,6 @@ public class ZakazaniTerminServiceImpl implements ZakazaniTerminService {
         zakazaniTermin.setCena(terminTreninga1.getCena());
         zakazaniTermin.setKlijentId(klijentID.intValue());
         zakazaniTermin.setJeBesplatan(false);
-
         zakazaniTerminRepository.save(zakazaniTermin);
 
         TerminReservationEmailDataTO terminReservationEmailDataTO = new TerminReservationEmailDataTO();

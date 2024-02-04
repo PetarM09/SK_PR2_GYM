@@ -55,7 +55,7 @@ public class TerminTreningaServiceImpl implements TerminTreningaService {
     public Integer brojTreninga(Long id){
         return Integer.valueOf(terminServiceRetry.executeSupplier(()->{
             RestTemplate restTemplate = new RestTemplate();
-            return restTemplate.getForObject("http://localhost:8080/korisnici/brojTreninga/"+id, String.class);
+            return restTemplate.getForObject("http://localhost:8084/users/api/korisnici/brojTreninga/"+id, String.class);
         }));
 //        Retry.decorateSupplier(retry ()-> OVDE TREBA GET REQ KA USER SERVISU VEROVATNO NOT SURE);
     }
